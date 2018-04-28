@@ -63,6 +63,9 @@ describe Robot do
   end
 
   describe '#turn' do
+    before do
+      subject.place([0,0], 'NORTH')
+    end
     shared_examples "rotation" do |face, direction, new_face|
       context "when facing #{face} and turning #{direction}" do
         before { subject.set_face(face) }

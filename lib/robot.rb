@@ -9,6 +9,8 @@ class Robot
       'EAST'  => [1, 0].freeze,
   }.freeze
 
+  FACES = FACE_TO_VECTOR_MAP.keys.freeze
+
   VECTOR_TO_FACE_MAP = FACE_TO_VECTOR_MAP.invert.freeze
 
   # 90 and 270 degree rotation matrices
@@ -18,8 +20,11 @@ class Robot
     'RIGHT' => Matrix.columns([[0, -1], [1, 0]]).freeze
   }.freeze
 
+  DIRECTIONS = ROTATION_MATRIX_MAP.keys.freeze
+
   def initialize
     set_face('NORTH')
+    @placed = false
   end
 
   def set_tabletop_dimensions(x, y)
@@ -35,6 +40,7 @@ class Robot
     if inside_limits?(position)
       set_face(face)
       @position = Matrix.column_vector(position)
+      @placed = true
       return true
     else
       return false
@@ -52,10 +58,12 @@ class Robot
 
   # rotate the `face` vector either 90 degrees or 270 depending on direction
   def turn(direction)
+    return unless @placed
     @face = (ROTATION_MATRIX_MAP[direction] * face_vector).column(0).to_a
   end
 
   def move
+    return unless @placed
     n = next_position
     if inside_limits?(n)
       @position = Matrix.column_vector(n)
@@ -64,6 +72,11 @@ class Robot
 
   def position
     @position.column(0).to_a
+  end
+
+  def report(out = STDOUT)
+    return unless @placed
+    out << "#{position[0]},#{position[1]},#{face}\n"
   end
 
   private
