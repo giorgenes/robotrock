@@ -13,17 +13,11 @@ class Parser
 
       if m = line.match(PLACE_REGEX)
         @robot.place([m[1].to_i, m[2].to_i], m[3])
-      end
-
-      if line == 'MOVE'
+      elsif line == 'MOVE'
         @robot.move
-      end
-
-      if Robot::DIRECTIONS.include?(line)
+      elsif Robot::DIRECTIONS.include?(line)
         @robot.turn(line)
-      end
-
-      if line == 'REPORT'
+      elsif line == 'REPORT'
         @robot.report(output_stream)
       end
     end
